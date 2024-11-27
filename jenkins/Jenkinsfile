@@ -1,14 +1,24 @@
 pipeline {
     agent any
+
+    environment {
+        NAME = 'andrey'
+    }
+
+    parameters {
+        string defaultValue: 'shablov', name: 'LASTNAME'
+    }
+
     stages {
         stage('Build') {
             steps {
                 bat 'mvn clean package'
+                echo "hello ${NAME}  ${params.LASTNAME}"
             }
 
             post {
                 success {
-                    archiveArtifacts artifacts: '**/target/*.war'
+                    archiveArtifacts artifacts: '**/target/*.jar'
                 }
             }
         }
