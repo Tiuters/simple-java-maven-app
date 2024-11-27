@@ -6,27 +6,31 @@ pipeline {
     }
 
     parameters {
-        string defaultValue: 'shablov', name: 'LASTNAME'
+        choice choices: ['dev', 'prod'], name: 'select_environment'
     }
 
     stages {
-        stage('Build') {
+        stage('build') {
             steps {
-                bat 'mvn clean package'
-                echo "hello ${NAME}  ${params.LASTNAME}"
+                bat 'mvn clean package -DskipTests=true'
             }
         }
 
         stage ('test') {
+            when {
+                expression{params.select_environment == 'dev'}
+            }
             parallel {
                 stage ('testA'){
                     steps {
                         echo " This is testA"
+                        bat "mvn test"
                     }
                 }
                 stage ('testB'){
                     steps {
                         echo " This is testB"
+                        bat "mvn test"
                     }
                 }
             }
